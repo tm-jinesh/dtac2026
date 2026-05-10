@@ -403,6 +403,7 @@
 <script>
 const CSV_PATH = 'registrations.csv';
 const LS_KEY = 'tm_scanner_setup_v2';
+const DEFAULT_WEB_APP_URL = 'https://script.google.com/macros/s/AKfycbxl7mMGf9Gu7qP42I68DRIpUpJ_DZamCVRDaQYr8pWhB4uecAUsIjRK3x3Z6d20nOI/exec';
 
 const state = {
   codes: new Map(),         // normalized code -> { displayCode, name, isPaid, paymentStatus, checkedIn, checkedInAt }
@@ -457,13 +458,13 @@ function saveSetup() {
   } catch (e) {}
 }
 function loadSetup() {
+  let saved = {};
   try {
     const raw = localStorage.getItem(LS_KEY);
-    if (!raw) return;
-    const v = JSON.parse(raw);
-    if (v.webAppUrl) document.getElementById('webapp-url').value = v.webAppUrl;
-    if (v.deskName) document.getElementById('desk-name').value = v.deskName;
+    if (raw) saved = JSON.parse(raw);
   } catch (e) {}
+  document.getElementById('webapp-url').value = saved.webAppUrl || DEFAULT_WEB_APP_URL || '';
+  document.getElementById('desk-name').value = saved.deskName || '';
 }
 
 // ----- CSV parsing -----
