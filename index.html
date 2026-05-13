@@ -643,24 +643,18 @@ async function autoLoadCsv() {
   }
 }
 
-// ----- URL extraction (for QRs that contain URLs) -----
-function tryUrlExtract(s) {
-  try {
-    const url = new URL(s);
-    for (const key of ['code','id','reg','ticket','t','c','q']) {
-      const v = url.searchParams.get(key);
-      if (v) return v;
-    }
-    const parts = url.pathname.split('/').filter(Boolean);
-    if (parts.length) return parts[parts.length - 1];
-  } catch (e) {}
-  return null;
+// ----- vCard extraction (QRs containing a vCard with X-APP-ID) -----
+function tryVCardExtract(s) {
+  if (!/BEGIN:VCARD/i.test(s)) return null;
+  // vCard fields may be separated by \r\n, \n, or spaces (single-line QR encoding)
+  const match = s.match(/X-APP-ID[^:]*:([^\r\n\s]+)/i);
+  return match ? match[1].trim() : null;
 }
 
 function lookupCode(scanned) {
   const direct = state.codes.get(normalize(scanned));
   if (direct) return direct;
-  const extracted = tryUrlExtract(scanned);
+  const extracted = tryVCardExtract(scanned);
   if (extracted) {
     const e = state.codes.get(normalize(extracted));
     if (e) return e;
