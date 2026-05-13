@@ -646,7 +646,8 @@ async function autoLoadCsv() {
 // ----- vCard extraction (QRs containing a vCard with X-APP-ID) -----
 function tryVCardExtract(s) {
   if (!/BEGIN:VCARD/i.test(s)) return null;
-  const match = s.match(/^X-APP-ID[^:]*:(.+)$/im);
+  // vCard fields may be separated by \r\n, \n, or spaces (single-line QR encoding)
+  const match = s.match(/X-APP-ID[^:]*:([^\r\n\s]+)/i);
   return match ? match[1].trim() : null;
 }
 
