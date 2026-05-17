@@ -208,7 +208,7 @@
 
   #qr-reader {
     background: #000; width: 100%;
-    max-height: 50vh; overflow: hidden; position: relative;
+    max-height: 65vh; overflow: hidden; position: relative;
   }
   #qr-reader video { width: 100% !important; height: auto !important; display: block; }
   #qr-reader__dashboard_section_csr,
@@ -840,14 +840,15 @@ function handleScan(decoded) {
 async function startScanner() {
   const reader = new Html5Qrcode('qr-reader');
   state.scanner = reader;
+  const isPortrait = window.innerHeight > window.innerWidth;
   const config = {
     fps: 10,
     qrbox: (vw, vh) => {
       const m = Math.min(vw, vh);
-      const size = Math.floor(m * 0.7);
+      const size = Math.floor(m * 0.9);
       return { width: size, height: size };
     },
-    aspectRatio: 1.333,
+    aspectRatio: isPortrait ? 0.75 : 1.333,
     disableFlip: false,
   };
   try {
